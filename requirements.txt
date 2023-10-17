@@ -1,0 +1,2 @@
+g2p_en
+syllabifier @ git+https://github.com/vgautam/arpabet-syllabifier
