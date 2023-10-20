@@ -15,6 +15,15 @@ def syllabify(pronunciation):
         syllabified.append(pronunciation)
     return syllabified
 
+# Get the unstressed pronounciation of a word
+def get_unstressed(word):
+    phonemes = g2p(word)
+    unstressed = []
+    for phoneme in phonemes:
+        # Remove stress markers
+        unstressed.append(re.sub(r"\d+", "", phoneme))
+    return unstressed
+
 # Get the phonemes for a text
 def get_phonemes(text, output_file):
     f = open(output_file, "w")
@@ -22,7 +31,7 @@ def get_phonemes(text, output_file):
         line = re.sub(r"[^a-zA-Z ]", "", line)
         for word in line.split(" "):
             # Seperate the syllables with hyphens
-            syllables = syllabify(g2p(word))
+            syllables = syllabify(get_unstressed(word))
             for syllable in syllables:
                 for phoneme in syllable:
                     f.write(phoneme)
