@@ -25,10 +25,24 @@ def get_unstressed(word):
     return unstressed
 
 # Get the phonemes for a text
-def get_phonemes(text, output_file):
+def get_phonemes(text):
+    out = []
+    for line in text:
+        line = re.sub(r"[,?!.]", "", line)
+        line_out = []
+        for word in line.split(" "):
+            # Seperate the syllables with hyphens
+            syllables = syllabify(get_unstressed(word))
+            line_out.append(syllables)
+        out.append(line_out)
+    return out
+
+# Print the phonemes for a text to a file
+def print_phonemes(text, output_file):
     f = open(output_file, "w")
     for line in text:
-        line = re.sub(r"[^a-zA-Z ]", "", line)
+        f.write(line)
+        line = re.sub(r"[,?!.]", "", line)
         for word in line.split(" "):
             # Seperate the syllables with hyphens
             syllables = syllabify(get_unstressed(word))
@@ -41,3 +55,31 @@ def get_phonemes(text, output_file):
                 f.write(" ")
         f.write("\n")
     f.close()
+
+class Token:
+    def __init__(self, word):
+        self.word = word
+        self.syllables = []
+
+    class Syllable:
+        def __init__(self, phonemes):
+            self.phonemes = phonemes
+            self.group = 0
+
+    def add_syllables(self, syllables):
+        for syllable in syllables:
+            self.syllables.append(Token.Syllable(syllable))
+
+    
+def tokenize(lines):
+    tokens = []
+    for line in lines:
+        token_line = []
+        line = re.sub(r"[,?!.]", "", line)
+        for word in line.split(" "):
+            # Seperate the syllables with hyphens
+            token_word = Token(word)
+            token_word.add_syllables(syllabify(get_unstressed(word)))
+            token_line.append(token_word)
+        tokens.append(token_line)
+    return tokens

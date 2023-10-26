@@ -1,0 +1,29 @@
+{% for line in lines %}
+    <p>{% for word in line %}
+        {% for syllable in word.syllables %}
+            <span class="group{{syllable.group}}">
+            {% for phoneme in syllable.phonemes %}{{phoneme}}{% endfor %}
+            </span>
+        {% endfor %}
+    {% endfor %}</p>
+{% endfor %}
+
+<script>
+// Remove class group0
+var group0 = document.querySelectorAll('span.group0');
+for (var i = 0; i < group0.length; i++) {
+    var group = group0[i];
+    group.className = '';
+}
+// Give span of the same class the same background color
+var groups = document.querySelectorAll('span[class^="group"]');
+for (var i = 0; i < groups.length; i++) {
+    var group = groups[i];
+    var groupClass = group.className;
+    var groupElements = document.querySelectorAll('span.' + groupClass);
+    var color = '#' + Math.floor(Math.random()*16777215).toString(16);
+    for (var j = 0; j < groupElements.length; j++) {
+        groupElements[j].style.backgroundColor = color;
+    }
+}
+</script>
