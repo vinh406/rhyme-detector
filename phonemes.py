@@ -18,6 +18,7 @@ def syllabify(pronunciation):
 # Get the unstressed pronounciation of a word
 def get_unstressed(word):
     phonemes = phonemizer(word, lang='en_us')
+    phonemes = phonemes.replace("-", "")
     phonemes = phonemes.split('][')
     phonemes = [p.strip('[]') for p in phonemes]
     return phonemes

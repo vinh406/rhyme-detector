@@ -1,2 +1,4 @@
-g2p_en
+deep_phonemizer==0.0.19
+Jinja2==3.1.2
+python_Levenshtein==0.23.0
 syllabifier @ git+https://github.com/vgautam/arpabet-syllabifier

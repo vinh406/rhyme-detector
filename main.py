@@ -11,9 +11,9 @@ group = 0
 # Check each words within 3 lines of each other
 for i in range(len(lines)):
     for token in lines[i]:
-        for j in range(i, min(i + 3, len(lines))):
+        for j in range(i, min(i + 4, len(lines))):
             for token2 in lines[j]:
-                if i == j and token == token2:
+                if token == token2:
                     continue
                 # Check each syllable
                 for syllable in token.syllables:
