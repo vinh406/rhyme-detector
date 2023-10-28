@@ -1,6 +1,6 @@
-# Import the g2p_en module
-from g2p_en import G2p
-g2p = G2p()
+# Import the g2p model
+from dp.phonemizer import Phonemizer
+phonemizer = Phonemizer.from_checkpoint('en_us_cmudict_forward.pt')
 
 import re
 from syllabifier import syllabifyARPA
@@ -17,12 +17,10 @@ def syllabify(pronunciation):
 
 # Get the unstressed pronounciation of a word
 def get_unstressed(word):
-    phonemes = g2p(word)
-    unstressed = []
-    for phoneme in phonemes:
-        # Remove stress markers
-        unstressed.append(re.sub(r"\d+", "", phoneme))
-    return unstressed
+    phonemes = phonemizer(word, lang='en_us')
+    phonemes = phonemes.split('][')
+    phonemes = [p.strip('[]') for p in phonemes]
+    return phonemes
 
 # Get the phonemes for a text
 def get_phonemes(text):

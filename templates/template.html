@@ -1,4 +1,5 @@
 {% for line in lines %}
+    <p>{% for word in line %}{{word.word}} {% endfor %}</p>
     <p>{% for word in line %}
         {% for syllable in word.syllables %}
             <span class="group{{syllable.group}}">
