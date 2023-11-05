@@ -1,4 +1,4 @@
-from Levenshtein import distance
+from Levenshtein import ratio
 arpa_vowels = [
         "AA",
         "AE",
@@ -24,4 +24,4 @@ def remove_onset(syllable):
     return syllable
 
 def check_rhyme(syllable1, syllable2):
-    return remove_onset(syllable1) == remove_onset(syllable2)
+    return ratio(remove_onset(syllable1), remove_onset(syllable2)) > 0.7

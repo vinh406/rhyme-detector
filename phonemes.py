@@ -18,7 +18,7 @@ def syllabify(pronunciation):
 # Get the unstressed pronounciation of a word
 def get_unstressed(word):
     phonemes = phonemizer(word, lang='en_us')
-    phonemes = phonemes.replace("-", "")
+    phonemes = re.sub(r"[,?!.()-]", "", phonemes)
     phonemes = phonemes.split('][')
     phonemes = [p.strip('[]') for p in phonemes]
     return phonemes
@@ -27,7 +27,6 @@ def get_unstressed(word):
 def get_phonemes(text):
     out = []
     for line in text:
-        line = re.sub(r"[,?!.]", "", line)
         line_out = []
         for word in line.split(" "):
             # Seperate the syllables with hyphens
@@ -41,7 +40,6 @@ def print_phonemes(text, output_file):
     f = open(output_file, "w")
     for line in text:
         f.write(line)
-        line = re.sub(r"[,?!.]", "", line)
         for word in line.split(" "):
             # Seperate the syllables with hyphens
             syllables = syllabify(get_unstressed(word))
@@ -69,12 +67,19 @@ class Token:
         for syllable in syllables:
             self.syllables.append(Token.Syllable(syllable))
 
-    
+def preprocess(text):
+    res = []
+    for line in text:
+        line = re.sub(r'\([^)]*\)', '', line)
+        res.append(line)
+    return res
+
+
 def tokenize(lines):
+    preprocessed = preprocess(lines)
     tokens = []
-    for line in lines:
+    for line in preprocessed:
         token_line = []
-        line = re.sub(r"[,?!.]", "", line)
         for word in line.split(" "):
             # Seperate the syllables with hyphens
             token_word = Token(word)
