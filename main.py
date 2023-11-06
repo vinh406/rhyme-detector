@@ -1,6 +1,7 @@
 from phonemes import tokenize
 from rhymes import check_rhyme
 from jinja2 import Environment, FileSystemLoader
+
 # Get the phonemes for a text
 f = open("test/test.txt", "r")
 text = f.readlines()
@@ -45,10 +46,11 @@ for i in range(len(lines)):
                                 syllable.group = syllable2.group
                             elif syllable2.group == 0:
                                 syllable2.group = syllable.group
+
 # Generate html
 env = Environment(loader=FileSystemLoader("templates"))
 template = env.get_template("template.html")
-output = template.render(lines = lines)
+output = template.render(lines=lines)
 f = open("templates/ouput.html", "w")
 f.write(output)
 f.close()

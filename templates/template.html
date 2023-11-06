@@ -1,58 +1,57 @@
 {% for line in lines %}
-    <p>{% for word in line %}{{word.word}} {% endfor %}</p>
-    <p>{% for word in line %}
-        {% for syllable in word.syllables %}
-            <span class="group{{syllable.group}}">
-            {% for phoneme in syllable.phonemes %}{{phoneme}}{% endfor %}
-            </span>
-        {% endfor %}
-    {% endfor %}</p>
+<p>{% for word in line %}{{word.word}} {% endfor %}</p>
+<p>{% for word in line %}
+  {% for syllable in word.syllables -%}
+  <span class="group{{ syllable.group }}">{{ syllable.phonemes | join('') }}</span>
+  {%- if not loop.last %}-{% endif %}
+  {%- endfor %}{{ "&nbsp;"|safe }}{% endfor %}
+</p>
 {% endfor %}
 
 <script>
-// Remove class group0
-var group0 = document.querySelectorAll('span.group0');
-for (var i = 0; i < group0.length; i++) {
+  // Remove class group0
+  var group0 = document.querySelectorAll('span.group0');
+  for (var i = 0; i < group0.length; i++) {
     var group = group0[i];
     group.className = '';
-}
-// Give span of the same class the same background color
-function generateReadableBackgroundColor() {
-  var color, luminance, backgroundColor;
+  }
+  // Give span of the same class the same background color
+  function generateReadableBackgroundColor() {
+    var color, luminance, backgroundColor;
 
-  do {
-    color = generateRandomColor();
-    luminance = calculateLuminance(color);
-    backgroundColor = color;
-  } while (luminance < 0.5);
+    do {
+      color = generateRandomColor();
+      luminance = calculateLuminance(color);
+      backgroundColor = color;
+    } while (luminance < 0.5);
 
-  return {
-    background: backgroundColor
-  };
-}
+    return {
+      background: backgroundColor
+    };
+  }
 
-function generateRandomColor() {
+  function generateRandomColor() {
     return '#' + Math.floor(Math.random() * 16777215).toString(16);
-}
+  }
 
-function calculateLuminance(color) {
-  var hex = color.replace('#', '');
-  var r = parseInt(hex.substr(0, 2), 16) / 255;
-  var g = parseInt(hex.substr(2, 2), 16) / 255;
-  var b = parseInt(hex.substr(4, 2), 16) / 255;
+  function calculateLuminance(color) {
+    var hex = color.replace('#', '');
+    var r = parseInt(hex.substr(0, 2), 16) / 255;
+    var g = parseInt(hex.substr(2, 2), 16) / 255;
+    var b = parseInt(hex.substr(4, 2), 16) / 255;
 
-  var luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-  return luminance;
-}
+    var luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    return luminance;
+  }
 
-var groups = document.querySelectorAll('span[class^="group"]');
-for (var i = 0; i < groups.length; i++) {
+  var groups = document.querySelectorAll('span[class^="group"]');
+  for (var i = 0; i < groups.length; i++) {
     var group = groups[i];
     var groupClass = group.className;
     var groupElements = document.querySelectorAll('span.' + groupClass);
     var color = generateReadableBackgroundColor().background;
     for (var j = 0; j < groupElements.length; j++) {
-        groupElements[j].style.backgroundColor = color;
+      groupElements[j].style.backgroundColor = color;
     }
-}
+  }
 </script>
