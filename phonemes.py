@@ -1,7 +1,6 @@
 # Import the g2p model
-from dp.phonemizer import Phonemizer
-
-phonemizer = Phonemizer.from_checkpoint("en_us_cmudict_forward.pt")
+from g2p_en import G2p
+g2p = G2p()
 
 import re
 from syllabifier import syllabifyARPA
@@ -17,16 +16,6 @@ def syllabify(pronunciation):
         syllabified.append(pronunciation)
     return syllabified
 
-
-# Get the unstressed pronounciation of a word
-def get_unstressed(word):
-    phonemes = phonemizer(word, lang="en_us")
-    phonemes = re.sub(r"[,?!.()-]", "", phonemes)
-    phonemes = phonemes.split("][")
-    phonemes = [p.strip("[]") for p in phonemes]
-    return phonemes
-
-
 # Get the phonemes for a text
 def get_phonemes(text):
     out = []
@@ -34,7 +23,7 @@ def get_phonemes(text):
         line_out = []
         for word in line.split(" "):
             # Seperate the syllables with hyphens
-            syllables = syllabify(get_unstressed(word))
+            syllables = syllabify(g2p(word))
             line_out.append(syllables)
         out.append(line_out)
     return out
@@ -47,7 +36,7 @@ def print_phonemes(text, output_file):
         f.write(line)
         for word in line.split(" "):
             # Seperate the syllables with hyphens
-            syllables = syllabify(get_unstressed(word))
+            syllables = syllabify(g2p(word))
             for syllable in syllables:
                 for phoneme in syllable:
                     f.write(phoneme)
@@ -90,7 +79,9 @@ def tokenize(lines):
         for word in line.split(" "):
             # Seperate the syllables with hyphens
             token_word = Token(word)
-            token_word.add_syllables(syllabify(get_unstressed(word)))
+            word = re.sub(r"[,?!.()-]", "", word)
+            syllables = syllabify(g2p(word))
+            token_word.add_syllables(syllables)
             token_line.append(token_word)
         tokens.append(token_line)
     return tokens

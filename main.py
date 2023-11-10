@@ -2,8 +2,8 @@ from phonemes import tokenize
 from rhymes import check_rhyme
 from jinja2 import Environment, FileSystemLoader
 
-# Get the phonemes for a text
-f = open("test/test.txt", "r")
+# Read input file
+f = open("templates/input.txt", "r")
 text = f.readlines()
 lines = tokenize(text)
 
@@ -28,6 +28,7 @@ for i in range(len(lines)):
                                 syllable.group = syllable2.group
                             elif syllable2.group == 0:
                                 syllable2.group = syllable.group
+                                break
         # Check words from one line against the next line
         for j in range(i, min(i + 2, len(lines))):
             for token2 in lines[j]:
@@ -46,11 +47,12 @@ for i in range(len(lines)):
                                 syllable.group = syllable2.group
                             elif syllable2.group == 0:
                                 syllable2.group = syllable.group
+                                break
 
 # Generate html
 env = Environment(loader=FileSystemLoader("templates"))
 template = env.get_template("template.html")
 output = template.render(lines=lines)
-f = open("templates/ouput.html", "w")
+f = open("templates/output.html", "w")
 f.write(output)
 f.close()

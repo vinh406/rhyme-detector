@@ -1,22 +1,3 @@
-from Levenshtein import ratio
-arpa_vowels = [
-        "AA",
-        "AE",
-        "AH",
-        "AO",
-        "AW",
-        "AY",
-        "EH",
-        "ER",
-        "EY",
-        "IH",
-        "IY",
-        "OW",
-        "OY",
-        "UH",
-        "UW",
-    ]
-
 similar_vowels = [
     ['AA', 'AO', 'AH'],
     ['IY', 'IH'],
@@ -47,28 +28,33 @@ def calculate_similarity_score(syllable1, syllable2):
         return 0
 
     # Get the vowel and consonant sounds for each syllable
-    consonants1 = []
-    for phoneme in syllable1:
-        if phoneme in arpa_vowels:
-            v1 = phoneme
-        else:
-            consonants1.append(phoneme)
-
-    consonants2 = []
-    for phoneme in syllable2:
-        if phoneme in arpa_vowels:
-            v2 = phoneme
-        else:
-            consonants2.append(phoneme)
+    vowel1 = syllable1[0]
+    vowel2 = syllable2[0]
+    v1 = vowel1[:-1]
+    v2 = vowel2[:-1]
+    consonants1 = syllable1[1:]
+    consonants2 = syllable2[1:]
     
     # Compare vowel sounds
-    if v1 == v2:
+    if vowel1 == 'AH0' and vowel2 == 'ER0' or vowel1 == 'ER0' and vowel2 == 'AH0':
+        vowel_score = 0.85
+    elif v1 == v2:
         vowel_score = 1
     elif any(v1 in group and v2 in group for group in similar_vowels):
         vowel_score = 0.75
     else:
         vowel_score = 0.5
-    
+
+    # Compare vowel stress
+    if vowel1[-1] == vowel2[-1] or vowel1[-1] == '1' and vowel2[-1] == '2' or vowel1[-1] == '2' and vowel2[-1] == '1':
+        vowel_score *= 1
+    else:
+        vowel_score *= 0.85
+
+    # If there are no consonants, return the vowel score
+    if len(consonants1) == 0 and len(consonants2) == 0:
+        return vowel_score
+
     # Compare consonant sounds
     consonant_score = 1
     if len(consonants1) < len(consonants2):
@@ -89,7 +75,7 @@ def calculate_similarity_score(syllable1, syllable2):
 
 def remove_onset(syllable):
     for i in range(len(syllable)):
-        if syllable[i] in arpa_vowels:
+        if ['A', 'E', 'I', 'O', 'U'].count(syllable[i][0]) > 0:
             return syllable[i:]
     return syllable
 
